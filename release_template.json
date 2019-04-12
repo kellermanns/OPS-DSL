@@ -110,8 +110,8 @@
 				"timeZoneId": "America/Los_Angeles",
 				"recurrencePattern": "DAILY"
 			},
-			"plannedStartDate": "12/04/2019 00:00:00 -07",
-			"plannedEndDate": "12/04/2019 11:59:00 -07",
+			"plannedStartDate": "13/04/2019 00:00:00 -07",
+			"plannedEndDate": "13/04/2019 11:59:00 -07",
 			"name": "System Integration Tests",
 			"kind": "Phase"
 		},

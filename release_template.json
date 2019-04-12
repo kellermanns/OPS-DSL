@@ -1,0 +1,201 @@
+{
+	"objects": [
+		{
+			"application": "Local|Web",
+			"name": "${AppVersion}",
+			"kind": "ApplicationVersion"
+		},
+		{
+			"application": "Local|Reporting",
+			"name": "${AppVersion}",
+			"kind": "ApplicationVersion"
+		},
+		{
+			"application": "Local|Mobile",
+			"name": "${AppVersion}",
+			"kind": "ApplicationVersion"
+		},
+		{
+			"applicationVersion": "Local|Web/${AppVersion}",
+			"name": "Web",
+			"kind": "ContentSource",
+			"type": "Add Content",
+			"parameters": {
+				"project": "CDD Training",
+				"type": "User Story",
+				"tags": "Completed"
+			},
+			"endpoint": "Rally",
+			"plugin": "Rally Platform/2.3"
+		},
+		{
+			"applicationVersion": "Local|Web/${AppVersion}",
+			"commitRegularExpression": "^[ \\\\t]*([A-Za-z0-9_]+)",
+			"name": "1.0_commitSource",
+			"kind": "CommitSource",
+			"type": "Get Commit Messages",
+			"parameters": {
+				"owner": "kellermanns",
+				"repository": "CDD-Training"
+			},
+			"endpoint": "Git",
+			"plugin": "GitHub/1.0.1"
+		},
+		{
+			"version": "${ReleaseVersion}",
+			"runOnCreation": false,
+			"applicationVersions": [
+				"Local|Web/${AppVersion}",
+				"Local|Reporting/${AppVersion}",
+				"Local|Mobile/${AppVersion}"
+			],
+			"memberParties": [
+				"don@acme.com"
+			],
+			"ownerParties": [
+				"ron@acme.com"
+			],
+			"name": "Online-Banking-FY19",
+			"kind": "Release"
+		},
+		{
+			"value": "10200",
+			"scope": "RELEASE_SCOPE",
+			"release": "Online-Banking-FY19/${ReleaseVersion}",
+			"name": "JiraIssueID",
+			"kind": "ReleaseToken"
+		},
+		{
+			"value": "SWCDDTRAIN-27",
+			"scope": "RELEASE_SCOPE",
+			"release": "Online-Banking-FY19/${ReleaseVersion}",
+			"name": "JiraIssueKey",
+			"kind": "ReleaseToken"
+		},
+		{
+			"value": "SWCDDTRAIN",
+			"scope": "PHASE_SCOPE",
+			"release": "Online-Banking-FY19/${ReleaseVersion}",
+			"name": "JiraProject",
+			"kind": "ReleaseToken"
+		},
+		{
+			"value": "http://localhost:8070/rest/api/latest/issue/10200",
+			"scope": "RELEASE_SCOPE",
+			"release": "Online-Banking-FY19/${ReleaseVersion}",
+			"name": "SelfLink",
+			"kind": "ReleaseToken"
+		},
+		{
+			"environments": [
+				"UAT"
+			],
+			"skipTasksWithUnchangedApplications": false,
+			"isApprovalRequired": false,
+			"approvalGate": "AUTOMATIC",
+			"release": "Online-Banking-FY19/${ReleaseVersion}",
+			"name": "User Acceptance",
+			"kind": "Phase"
+		},
+		{
+			"environments": [
+				"SIT"
+			],
+			"skipTasksWithUnchangedApplications": false,
+			"isApprovalRequired": false,
+			"approvalGate": "SCHEDULED",
+			"release": "Online-Banking-FY19/${ReleaseVersion}",
+			"previousPhase": "User Acceptance",
+			"recurrence": {
+				"timeZoneId": "America/Los_Angeles",
+				"recurrencePattern": "DAILY"
+			},
+			"plannedStartDate": "12/04/2019 00:00:00 -07",
+			"plannedEndDate": "12/04/2019 11:59:00 -07",
+			"name": "System Integration Tests",
+			"kind": "Phase"
+		},
+		{
+			"environments": [
+				"Pre-Production"
+			],
+			"skipTasksWithUnchangedApplications": false,
+			"isApprovalRequired": false,
+			"approvalGate": "MANUAL",
+			"release": "Online-Banking-FY19/${ReleaseVersion}",
+			"previousPhase": "System Integration Tests",
+			"name": "Production Verfication",
+			"kind": "Phase"
+		},
+		{
+			"environments": [
+				"Production"
+			],
+			"skipTasksWithUnchangedApplications": false,
+			"isApprovalRequired": false,
+			"approvalGate": "MANUAL",
+			"release": "Online-Banking-FY19/${ReleaseVersion}",
+			"previousPhase": "Production Verfication",
+			"name": "Production",
+			"kind": "Phase"
+		},
+		{
+			"phase": "Online-Banking-FY19/${ReleaseVersion}/User Acceptance",
+			"isDisabled": false,
+			"name": "Manual Task",
+			"kind": "Task"
+		},
+		{
+			"previousTasks": [
+				"Manual Task"
+			],
+			"phase": "Online-Banking-FY19/${ReleaseVersion}/User Acceptance",
+			"isDisabled": false,
+			"name": "Create Jira Issue",
+			"kind": "Task",
+			"type": "Create JIRA Issue",
+			"parameters": {
+				"issueType": "Story",
+				"summary": "test for tokens, project = %JiraProject%",
+				"projectKey": "SWCDDTRAIN",
+				"issueId": "%JiraIssueID%",
+				"issueKey": "%JiraIssueKey%",
+				"advanced": "false",
+				"selfURI": "%SelfLink%"
+			},
+			"endpoint": "Jira",
+			"plugin": "Jira/1.2.1"
+		},
+		{
+			"phase": "Online-Banking-FY19/${ReleaseVersion}/System Integration Tests",
+			"isDisabled": false,
+			"name": "Manual Task",
+			"kind": "Task"
+		},
+		{
+			"phase": "Online-Banking-FY19/${ReleaseVersion}/System Integration Tests",
+			"isDisabled": false,
+			"name": "Add Jira Issue Comment",
+			"kind": "Task",
+			"type": "Add JIRA Issue Comment",
+			"parameters": {
+				"issueId": "%JiraIssueKey%",
+				"comment": "ID=JiraIssueID=%JiraIssueID% and SelfLink = %SelfLink%"
+			},
+			"endpoint": "Jira",
+			"plugin": "Jira/1.2.1"
+		},
+		{
+			"phase": "Online-Banking-FY19/${ReleaseVersion}/Production Verfication",
+			"isDisabled": false,
+			"name": "Manual Task",
+			"kind": "Task"
+		},
+		{
+			"phase": "Online-Banking-FY19/${ReleaseVersion}/Production",
+			"isDisabled": false,
+			"name": "Manual Task",
+			"kind": "Task"
+		}
+	]
+}
